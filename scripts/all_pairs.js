@@ -5,8 +5,8 @@ const ERC20_ABI = [
     "function symbol() external view  returns (string)",
     "function name() external view  returns (string)"
 ]
-const factoryAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512"
-const chainId = 31337   // hardhat
+const factoryAddress = "0xDf56b2cdbFE438b8cabae1Ab74E64824C19bB242"
+const chainId = 71393   // hardhat
 
 
 
@@ -33,7 +33,6 @@ async function main() {
             totalSupply: ethers.utils.formatUnits(await pair.totalSupply(), 8),
             token0,
             token1,
-
         }
         console.log(r)
     }

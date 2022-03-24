@@ -2,9 +2,14 @@
 pragma solidity 0.8.11;
 
 contract WETH {
-    string public name     = "Wrapped Ether";
-    string public symbol   = "WETH";
-    uint8  public decimals = 18;
+    string public name;
+    string public symbol;
+    uint8  public decimals;
+
+    uint256 public constant ERR_NO_ERROR = 0x0;
+
+    // Error Code: Non-zero value expected to perform the function.
+    uint256 public constant ERR_INVALID_ZERO_VALUE = 0x01;
 
     event  Approval(address indexed src, address indexed guy, uint wad);
     event  Transfer(address indexed src, address indexed dst, uint wad);
@@ -14,18 +19,35 @@ contract WETH {
     mapping (address => uint)                       public  balanceOf;
     mapping (address => mapping (address => uint))  public  allowance;
 
+    constructor(string memory _name, string memory _symbol, uint8 _decimals ) {
+        name = _name;
+        symbol = _symbol;
+        decimals = _decimals;
+
+    }
+
     receive() external payable {
         deposit();
     }
-    function deposit() public payable {
+    function deposit() public payable returns (uint256) {
+        if (msg.value == 0) {
+            return ERR_INVALID_ZERO_VALUE;
+        }
         balanceOf[msg.sender] += msg.value;
         emit Deposit(msg.sender, msg.value);
+        return ERR_NO_ERROR;
     }
-    function withdraw(uint wad) public {
+
+    function withdraw(uint wad) public returns (uint256) {
+        if (wad == 0) {
+            return ERR_INVALID_ZERO_VALUE;
+        }
+
         require(balanceOf[msg.sender] >= wad);
         balanceOf[msg.sender] -= wad;
         payable(msg.sender).transfer(wad);
         emit Withdrawal(msg.sender, wad);
+        return ERR_NO_ERROR;
     }
 
     function totalSupply() public view returns (uint) {
